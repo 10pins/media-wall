@@ -8,13 +8,24 @@ def get_dimensions(width : float, height : float, depth : float, thickness : flo
 
     total_area = (16 * w1 * depth) + (8 * w2 * depth) + (16 * h1 * depth) + 8 * h2 * depth
 
-    print('16 pieces of {} x {} x {} mm'.format(w1,depth,thickness))
-    print('8 pieces of {} x {} x {} mm'.format(w2,depth,thickness))
-    print('16 pieces of {} x {} x {} mm'.format(h1,depth,thickness))
-    print('8 pieces of {} x {} x {} mm'.format(h2,depth,thickness))
+    if width == tv_width * 2:
+        print('24 pieces of {} x {} x {} mm'.format(w1,depth,thickness))
+    else:
+        print('16 pieces of {} x {} x {} mm'.format(w1,depth,thickness))
+        print('8 pieces of {} x {} x {} mm'.format(w2,depth,thickness))
+
+    if height == tv_height * 2:
+        print('24 pieces of {} x {} x {} mm'.format(h1,depth,thickness))
+    else:
+        print('16 pieces of {} x {} x {} mm'.format(h1,depth,thickness))
+        print('8 pieces of {} x {} x {} mm'.format(h2,depth,thickness))
+
+
     print('Total Area: {:,}mm²'.format(total_area))
 
+def gen_svg(width : float, height : float, depth : float, thickness : float, tv_width : float, tv_height : float):
+    pass
 
-get_dimensions(2407,2008,500,17.5,1975,998)
+get_dimensions(2400,2400,500,17.5,1200,1200)
 
     
