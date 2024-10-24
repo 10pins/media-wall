@@ -1,3 +1,4 @@
+import os
 
 def get_dimensions(width : float, height : float, depth : float, thickness : float, tv_width : float, tv_height : float):
     w1 = (width - tv_width) / 2.0
@@ -23,7 +24,13 @@ def get_dimensions(width : float, height : float, depth : float, thickness : flo
 
     print('Total Area: {:,}mm²'.format(total_area))
 
+SCALE = 1.0
+OFFSET = 5.0
+GAP = 25
+SEP = 10
+
 def gen_svg(width : float, height : float, thickness : float, tv_width : float, tv_height : float):
+    #wall lines
     w1 = (width - tv_width) / 2.0
     w2 = tv_width / 2.0
 
@@ -57,22 +64,64 @@ def gen_svg(width : float, height : float, thickness : float, tv_width : float, 
     coords.extend([[w,0,w,h1] for w in part_vert])
     coords.extend([[w,height - h1,w,height] for w in part_vert])
 
-    SCALE = 1.0
-    OFFSET = 5.0
+   
+    adjust_coords(coords)
+    svg = gen_lines(coords,'lines')
 
-    for line in coords:
-        for i in range(4):
-            line[i] = line[i] * SCALE + OFFSET
+    #measurment lines
+    
+    coords_m = [[0,- GAP,width,- GAP],
+                [width + GAP,0,width + GAP,height],
+                [- GAP,h1 + h2,- GAP,height - h1],
+                [- GAP,height - h1,- GAP,height],
+                [0,height + GAP,w1,height + GAP],
+                [w1,height + GAP,w1 + w2,height + GAP]]
+
+    adjust_coords(coords_m)
+    svg += gen_lines(coords_m,'m-lines')
+
+    #seperator lines
+    
+    coords_s = [[0,- GAP - SEP,0,- GAP + SEP],
+                [width,- GAP - SEP,width,- GAP + SEP],
+                [width + GAP - SEP,0,width + GAP + SEP,0],
+                [width + GAP - SEP,height,width + GAP + SEP,height],
+                [- GAP - SEP,h1 + h2,- GAP + SEP,h1 + h2],
+                [- GAP - SEP,height - h1,- GAP + SEP,height - h1],
+                [- GAP - SEP,height,- GAP + SEP,height],
+                [0,height + GAP - SEP,0,height + GAP + SEP],
+                [w1,height + GAP - SEP,w1,height + GAP + SEP],
+                [w1 + w2,height + GAP - SEP,w1 + w2,height + GAP + SEP]]
+    
+    adjust_coords(coords_s)
+    svg += gen_lines(coords_s,'s-lines')
+
+    return svg
+
+def gen_lines(coords: list[list[float]], id : str):
+    lines = '<g id="{}">\n'.format(id)
 
     LINE_STRING = '<line x1="{}" y1="{}" x2="{}" y2="{}"/>\n'
-
-    svg = ''
     for line in coords:
-        svg += LINE_STRING.format(*line)
+        lines += LINE_STRING.format(*line)
 
-    print(svg)
+    lines += '</g>\n'
+    return lines
+
+def adjust_coords(coords: list[list[float]]):
+    for line in coords:
+        for i in range(4):
+            line[i] = line[i] * SCALE + OFFSET + GAP + SEP
 
 
 #get_dimensions(2400,2400,500,17.5,1200,1200)
 gen_svg(2400,1600,18,1200,800)
+
+with open(os.path.join('comp','drawing.html'),'w') as f:
+    f.write(gen_svg(2400,1600,18,1200,800))
+
+with open(os.path.join('docs','drawing','index.html'),'w') as fw:
+    for file in ['begin','drawing','end']:
+        with open(os.path.join('comp','{}.html'.format(file))) as fr:
+            fw.write(fr.read())
     
