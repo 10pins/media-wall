@@ -180,11 +180,12 @@ function genCuttingList(width,height,depth,thickness,tv_width,tv_height){
 
 function buttonPressed(){
     const measurmentLabels = ['width','height','depth','thickness','tv-width','tv-height'];
+    const defaults = [DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_DEPTH,DEFAULT_THICKNESS,DEFAULT_TV_WIDTH,DEFAULT_TV_HEIGHT]
     const ms = []
 
     for (let i = 0; i < measurmentLabels.length; i++){
         let x = document.getElementById(measurmentLabels[i]).value;
-        x = x ? Number(x) : 1000;
+        x = x ? Number(x) : defaults[i];
         ms.push(x);
     }
 
@@ -201,14 +202,22 @@ function buttonPressed(){
     history.replaceState(null, null, '?'+urlParams.toString());
 
     document.getElementById('drawing-link').setAttribute('href','https://10pins.github.io/media-wall/drawing/'+'?'+urlParams.toString());
+
+    document.getElementById('width').value = ms[0];
+    document.getElementById('height').value = ms[1];
+    document.getElementById('depth').value = ms[2];
+    document.getElementById('thickness').value = ms[3];
+    document.getElementById('tv-width').value = ms[4];
+    document.getElementById('tv-height').value = ms[5];
+    
 }
 
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 
-var height = urlParams.has('height') ? Number(urlParams.get('height')) : DEFAULT_HEIGHT;
 var width = urlParams.has('width') ? Number(urlParams.get('width')): DEFAULT_WIDTH;
+var height = urlParams.has('height') ? Number(urlParams.get('height')) : DEFAULT_HEIGHT;
 var depth = urlParams.has('depth') ? Number(urlParams.get('depth')): DEFAULT_DEPTH;
 var thickness = urlParams.has('thickness') ? Number(urlParams.get('thickness')) : DEFAULT_THICKNESS;
 var tv_height = urlParams.has('tv_height') ? Number(urlParams.get('tv_height')) : DEFAULT_TV_HEIGHT;
@@ -235,8 +244,8 @@ if (document.getElementById('width')){
 }
 
 
-urlParams.set('height',height);
 urlParams.set('width',width);
+urlParams.set('height',height);
 urlParams.set('depth',depth);
 urlParams.set('thickness',thickness);
 urlParams.set('tv_height',tv_height);
