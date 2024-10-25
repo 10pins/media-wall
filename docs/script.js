@@ -142,7 +142,7 @@ function genSvg(width,height,thickness,tv_width,tv_height){
         svg += ` <text x="${t[0]}" y="${t[1]}" font-size="25" transform="rotate(90,${t[0]},${t[1]})">${m}mm</text>\n`;
     }
 
-    console.log(svg);
+    //console.log(svg);
     //console.log(full_hor.toString());
     return svg;
 }
@@ -225,12 +225,15 @@ if (document.getElementById('drawing-link')){
     document.getElementById('drawing-link').setAttribute('href','https://10pins.github.io/media-wall/drawing/'+'?'+urlParams.toString());
 }
 
-document.getElementById('width').value = width;
-document.getElementById('height').value = height;
-document.getElementById('depth').value = depth;
-document.getElementById('thickness').value = thickness;
-document.getElementById('tv-width').value = tv_width;
-document.getElementById('tv-height').value = tv_height;
+if (document.getElementById('width')){
+    document.getElementById('width').value = width;
+    document.getElementById('height').value = height;
+    document.getElementById('depth').value = depth;
+    document.getElementById('thickness').value = thickness;
+    document.getElementById('tv-width').value = tv_width;
+    document.getElementById('tv-height').value = tv_height;
+}
+
 
 urlParams.set('height',height);
 urlParams.set('width',width);
