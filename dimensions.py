@@ -28,8 +28,19 @@ SCALE = 1.0
 OFFSET = 5.0
 GAP = 25
 SEP = 10
+TEXT_H = 25
 
 def gen_svg(width : float, height : float, thickness : float, tv_width : float, tv_height : float):
+    padding = 2 * (OFFSET + GAP + SEP + TEXT_H)
+    svg = '<svg height="{}" width="{}" xmlns="http://www.w3.org/2000/svg">\n'.format(height + padding,width + padding)
+
+    svg += '''<style>		
+                #lines{stroke:black;stroke-width:3}
+                #m-lines{stroke:gray;stroke-width:2;stroke-dasharray:5,5;}     
+                #s-lines{stroke:gray;stroke-width:3;}
+                text{text-anchor:middle;stroke:red;fill:red;font-size:35;}        
+            </style>\n'''
+
     #wall lines
     w1 = (width - tv_width) / 2.0
     w2 = tv_width / 2.0
@@ -66,7 +77,7 @@ def gen_svg(width : float, height : float, thickness : float, tv_width : float, 
 
    
     adjust_coords(coords)
-    svg = gen_lines(coords,'lines')
+    svg += gen_lines(coords,'lines')
 
     #measurment lines
     
@@ -75,7 +86,8 @@ def gen_svg(width : float, height : float, thickness : float, tv_width : float, 
                 [- GAP,h1 + h2,- GAP,height - h1],
                 [- GAP,height - h1,- GAP,height],
                 [0,height + GAP,w1,height + GAP],
-                [w1,height + GAP,w1 + w2,height + GAP]]
+                [w1,height + GAP,w1 + w2,height + GAP],
+                [width - w1 - thickness, height + GAP, width - w1 + thickness, height + GAP]]
 
     adjust_coords(coords_m)
     svg += gen_lines(coords_m,'m-lines')
@@ -91,10 +103,36 @@ def gen_svg(width : float, height : float, thickness : float, tv_width : float, 
                 [- GAP - SEP,height,- GAP + SEP,height],
                 [0,height + GAP - SEP,0,height + GAP + SEP],
                 [w1,height + GAP - SEP,w1,height + GAP + SEP],
-                [w1 + w2,height + GAP - SEP,w1 + w2,height + GAP + SEP]]
+                [w1 + w2,height + GAP - SEP,w1 + w2,height + GAP + SEP],
+                [width - w1 - thickness,height + GAP - SEP,width - w1 - thickness,height + GAP + SEP],
+                [width - w1 + thickness,height + GAP - SEP,width - w1 + thickness,height + GAP + SEP]]
+    
+    
     
     adjust_coords(coords_s)
     svg += gen_lines(coords_s,'s-lines')
+
+    #text
+    coords_t = [[w1 + w2,- GAP - SEP],
+                [w1 / 2.0,height + GAP + SEP + TEXT_H],
+                [w1 + (w2 / 2.0),height + GAP + SEP + TEXT_H],
+                [width - w1,height + GAP + SEP + TEXT_H]]
+    mes = [width,w1,w2,thickness * 2]
+
+    adjust_coords(coords_t)
+    for t,m in zip(coords_t,mes):
+        svg += ' <text x="{}" y="{}" font-size="25">{}mm</text>\n'.format(t[0],t[1],m)
+
+    coords_t = [[width + GAP + SEP,h1 + h2],
+                [- GAP - SEP - TEXT_H,height - (h1 / 2.0)],
+                [- GAP - SEP - TEXT_H,height - h1 - (h2 / 2.0)]]
+    mes = [height,h1,h2]
+
+    adjust_coords(coords_t)
+    for t,m in zip(coords_t,mes):
+        svg += ' <text x="{0}" y="{1}" font-size="25" transform="rotate(90,{0},{1})">{2}mm</text>\n'.format(t[0],t[1],m)
+
+    svg += 'Sorry, your browser does not support inline SVG.\n</svg>'
 
     return svg
 
@@ -110,12 +148,12 @@ def gen_lines(coords: list[list[float]], id : str):
 
 def adjust_coords(coords: list[list[float]]):
     for line in coords:
-        for i in range(4):
-            line[i] = line[i] * SCALE + OFFSET + GAP + SEP
+        for i in range(len(line)):
+            line[i] = line[i] * SCALE + OFFSET + GAP + SEP + TEXT_H
 
 
 #get_dimensions(2400,2400,500,17.5,1200,1200)
-gen_svg(2400,1600,18,1200,800)
+#gen_svg(2400,1600,18,1200,800)
 
 with open(os.path.join('comp','drawing.html'),'w') as f:
     f.write(gen_svg(2400,1600,18,1200,800))
