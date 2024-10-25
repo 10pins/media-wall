@@ -3,9 +3,65 @@
     <title>Media Wall</title>
 </head>
 <body>
-    <div align="center">
-        <h2>Media Wall</h2>
+    <div>
+        <h1>Media Wall</h1>
         <p>Enter Measurments...</p>
-        <div/>
+        
+        <label for="width">Width: </label>
+        <input type="text" id="width" name="width" size="4">
+        <label for="width">mm</label>
 
+        <br>
+        <br>
+
+        <label for="height">Height:</label>
+        <input type="text" id="height" name="height" size="4">
+        <label for="height">mm</label>
+
+        <br>
+        <br>
+     
+        <label for="depth">Depth:</label>
+        <input type="text" id="depth" name="depth" size="4">
+        <label for="depth">mm</label>
+
+        <br>
+        <br>
+
+        <label for="thickness">Thickness:</label>
+        <input type="text" id="thickness" name="thickness" size="4">
+        <label for="thickness">mm</label>
+
+        <br>
+        <br>
+
+        <label for="tv-width">TV Width:</label>
+        <input type="text" id="tv-width" name="tv-width" size="4">
+        <label for="tv-width">mm</label>
+
+        <br>
+        <br>
+
+        <label for="tv-height">TV Height:</label>
+        <input type="text" id="tv-height" name="tv-height" size="4">
+        <label for="tv-height">mm</label>
+
+        <br>
+        <br>
+
+        <button type="button" onclick="buttonPressed()">LETS GO</button>
+   
+
+        <h2>Cutting List</h2>
+        <ul id="cutting-list" padding-left="0">
+
+        </ul>
+
+        <a id="drawing-link"><h2>Drawing</h2></a>
+        <div id="drawing-parent">
+
+        </div>
+    </div>
+
+<script src="script.js"></script>
 </body>

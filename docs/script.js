@@ -1,3 +1,10 @@
+const DEFAULT_HEIGHT = 1600;
+const DEFAULT_WIDTH = 2400;
+const DEFAULT_DEPTH = 600;
+const DEFAULT_THICKNESS = 18;
+const DEFAULT_TV_HEIGHT = 800;
+const DEFAULT_TV_WIDTH = 1200;
+
 const SCALE = 1;
 const OFFSET = 5;
 const GAP = 25;
@@ -136,32 +143,99 @@ function genSvg(width,height,thickness,tv_width,tv_height){
     }
 
     console.log(svg);
-    console.log(full_hor.toString());
+    //console.log(full_hor.toString());
     return svg;
 }
 
-const DEFAULT_HEIGHT = 1600;
-const DEFAULT_WIDTH = 2400;
-const DEFAULT_THICKNESS = 18;
-const DEFAULT_TV_HEIGHT = 800;
-const DEFAULT_TV_WIDTH = 1200;
+function genCuttingList(width,height,depth,thickness,tv_width,tv_height){
+    const w1 = (width - tv_width) / 2;
+    const w2 = tv_width / 2;
+
+    const h1 = ((height - tv_height) / 2) - 2 * thickness;
+    const h2 = (tv_height / 2) - 2 * thickness;
+
+    const cuttingList = [];
+    if (width == tv_width * 2){
+        cuttingList.push(`24 pieces of ${w1} x ${depth} x ${thickness} mm`);
+    }
+    else{
+        cuttingList.push(`16 pieces of ${w1} x ${depth} x ${thickness} mm`);
+        cuttingList.push(`8 pieces of ${w2} x ${depth} x ${thickness} mm`);
+    }
+        
+    if (height == tv_height * 2){
+        cuttingList.push(`24 pieces of ${h1} x ${depth} x ${thickness} mm`);
+    }     
+    else{
+        cuttingList.push(`16 pieces of ${h1} x ${depth} x ${thickness} mm`);
+        cuttingList.push(`8 pieces of ${h2} x ${depth} x ${thickness} mm`);
+    }
+
+    for (let i = 0; i < cuttingList.length; i++){
+        cuttingList[i] = `<li>${cuttingList[i]}</li>`
+    }
+        
+    return cuttingList.join('\n');
+}
+
+function buttonPressed(){
+    const measurmentLabels = ['width','height','depth','thickness','tv-width','tv-height'];
+    const ms = []
+
+    for (let i = 0; i < measurmentLabels.length; i++){
+        let x = document.getElementById(measurmentLabels[i]).value;
+        x = x ? Number(x) : 1000;
+        ms.push(x);
+    }
+
+    document.getElementById('drawing-parent').innerHTML = genSvg(ms[0],ms[1],ms[3],ms[4],ms[5]);
+    document.getElementById('cutting-list').innerHTML = genCuttingList(ms[0],ms[1],ms[2],ms[3],ms[4],ms[5]);
+
+    
+    urlParams.set('width',ms[0]);
+    urlParams.set('height',ms[1]);
+    urlParams.set('depth',ms[2]);
+    urlParams.set('thickness',ms[3]);
+    urlParams.set('tv_width',ms[4]);
+    urlParams.set('tv_height',ms[5]); 
+    history.replaceState(null, null, '?'+urlParams.toString());
+
+    document.getElementById('drawing-link').setAttribute('href','https://10pins.github.io/media-wall/drawing/'+'?'+urlParams.toString());
+}
+
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 
 var height = urlParams.has('height') ? Number(urlParams.get('height')) : DEFAULT_HEIGHT;
 var width = urlParams.has('width') ? Number(urlParams.get('width')): DEFAULT_WIDTH;
+var depth = urlParams.has('depth') ? Number(urlParams.get('depth')): DEFAULT_DEPTH;
 var thickness = urlParams.has('thickness') ? Number(urlParams.get('thickness')) : DEFAULT_THICKNESS;
 var tv_height = urlParams.has('tv_height') ? Number(urlParams.get('tv_height')) : DEFAULT_TV_HEIGHT;
 var tv_width = urlParams.has('tv_width') ? Number(urlParams.get('tv_width')) : DEFAULT_TV_WIDTH;
 
 
-
 document.getElementById('drawing-parent').innerHTML = genSvg(width,height,thickness,tv_width,tv_height);
+
+if (document.getElementById('cutting-list')){
+    document.getElementById('cutting-list').innerHTML = genCuttingList(width,height,depth,thickness,tv_width,tv_height);
+}
+
+if (document.getElementById('drawing-link')){
+    document.getElementById('drawing-link').setAttribute('href','https://10pins.github.io/media-wall/drawing/'+'?'+urlParams.toString());
+}
+
+document.getElementById('width').value = width;
+document.getElementById('height').value = height;
+document.getElementById('depth').value = depth;
+document.getElementById('thickness').value = thickness;
+document.getElementById('tv-width').value = tv_width;
+document.getElementById('tv-height').value = tv_height;
 
 urlParams.set('height',height);
 urlParams.set('width',width);
+urlParams.set('depth',depth);
 urlParams.set('thickness',thickness);
 urlParams.set('tv_height',tv_height);
 urlParams.set('tv_width',tv_width);
-history.replaceState(null, null, "?"+urlParams.toString());
+history.replaceState(null, null, '?'+urlParams.toString());
